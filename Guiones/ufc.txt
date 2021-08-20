@@ -1,0 +1,28 @@
+<music "intro.mp3" "local">
+The Ultimate Fighting Championship (UFC) <img "UFC" "imgur"> is an American mixed martial arts (MMA) <img "MMA" "imgur"> 
+promotion company based in Las Vegas, Nevada, <img "Las Vegas" "imgur">  which is owned and operated by Zuffa, LLC, a wholly owned subsidiary of Endeavor Group Holdings.
+It is the largest MMA promotion company in the world and features some of the highest-level fighters <img "fighters" "imgur">  in the sport on its roster.
+The UFC produces events worldwide <img "world" "imgur"> that showcase twelve <img "twelve" "imgur"> weight divisions (eight men's divisions and four women's divisions) 
+and abides by the Unified Rules of Mixed Martial Arts. As of 2020, the UFC has held over 500 events. 
+Dana White <img "Dana White" "imgur"> has been UFC president since 2001. Under White's stewardship, the UFC has grown into a globally popular multi-billion-dollar <img "million dollars" "imgur"> enterprise.
+</music>
+
+<music "ufcsong.mp3" "local">
+The first event was held in 1993 at the McNichols Sports Arena in Denver, Colorado. <img "Denver, Colorado" "imgur">
+The purpose of the early Ultimate Fighting Championship competitions was to identify the most effective martial art <img "martial arts" "imgur">
+in a contest with minimal rules and no weight classes between competitors of different fighting disciplines like 
+Boxing <img "Boxing" "imgur"> , Kickboxing <img "Kickboxing" "imgur"> , Brazilian Jiu-Jitsu <img "Brazilian Jiu-Jitsu" "imgur"> , Sambo <img "Sambo" "imgur"> , Wrestling <img "Wrestling" "imgur"> ,
+Muay Thai <img "Muay Thai" "imgur"> , Karate <img "Karate" "imgur"> , Taekwondo <img "Taekwondo" "imgur"> , and Judo  <img "Judo" "imgur"> 
+In subsequent events, fighters began adopting effective techniques from more than one discipline, 
+which indirectly helped create a separate style of fighting known as present-day mixed martial arts.
+</music>
+
+<music "outro.mp3" "local">
+In 2016, UFC's parent company, Zuffa, was sold to a group led by Endeavor, then known as William Morris Endeavor (WME–IMG), 
+including Silver Lake Partners, Kohlberg Kravis Roberts and MSD Capital[11] for US$4.025 billion.
+In 2021, Endeavor bought out Zuffa's other owners at a valuation of $1.7 billion.
+</music>
+
+<music "famous" "local">
+Some famous fighters that competed in the UFC are Conor McGregor <img "Conor McGregor" "imgur"> , Ronda Roussey <img "Ronda Rousey" "imgur"> , Khabib Nurmagomedov <img "Khabib Nurmagomedov" "imgur"> , Jon Jones <img "Jon Jones" "imgur"> , Anderson Silva <img "Anderson Silva" "imgur"> to name a few
+</music>

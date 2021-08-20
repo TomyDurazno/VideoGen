@@ -1,0 +1,35 @@
+/************************************/
+
+Status:
+
+	- Story blocks
+
+		Free royalty images
+		
+Status 2:
+
+	So:
+	
+	- Conseguir los archivos (images & audio)
+	
+		- Descargarlos a una carpeta
+	
+	- Matchear el audio con el xml generado 
+	
+	- Exportarlo a Premiere 	
+	
+	edit: link a la documentación de la API de Storyblocks 
+	
+		https://documentation.storyblocks.com/
+		
+Status 3:
+
+	Se hizo una primer implementación usando 'Imgur' como proveedor de imágenes
+
+Status 4:
+
+	- Contemplar el caso donde sentencias tienen strings literales como
+	
+		named him the "Artist of the Decade (2000–2009)". The Marshall Mathers LP 
+		
+	
