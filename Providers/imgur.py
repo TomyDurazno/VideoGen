@@ -61,7 +61,7 @@ def imgurProvider(name):
             if not os.path.exists(path):
                 os.makedirs(path)
                 if log:
-                    print(f'New directory created: {name}')
+                    print(f'New directory created: {path}')
 
             with open(f'{path}/{uniqueName}.{extension}', "wb") as f:
                 f.write(img.content)
