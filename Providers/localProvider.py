@@ -13,7 +13,7 @@ def localImgProvider(name):
     notImplemented(name, "local image")
 
 
-def localMusicProvider(name, source, extension):
+def localMusicProvider(name, source):
     notImplemented(name, "local music")
 
 
