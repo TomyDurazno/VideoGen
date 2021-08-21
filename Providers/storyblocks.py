@@ -14,7 +14,7 @@ def buildUrl(args, gen):
     qs = None
     prefix = ""
     for k in ["APIKEY", "EXPIRES", "HMAC"]:
-        if qs is not None:
+        if qs:
             prefix = "&"
         else:
             qs = ""

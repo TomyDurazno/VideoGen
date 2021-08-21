@@ -131,4 +131,5 @@ dmypy.json
 #folders
 /Scripts
 /Images
+/Music
 config.json

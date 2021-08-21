@@ -27,7 +27,7 @@ def getProviders(key):
     def getImplementation(name, source):
         provider = providers.get(key).get(source)
 
-        if provider is not None:
+        if provider:
             provider(name)
         else:
             if log:

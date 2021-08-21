@@ -72,14 +72,15 @@ def tokenize(lines):
     # Join all acumulated words into a sentence
     def joinSentence():
         if len(words) > 0:
-            wx = {}
-            wx["sentence"] = " ".join(words)
+            wx = {
+                "sentence": " ".join(words)
+            }
             ret.append(wx)
             words.clear()
 
     # set temp object args
     def setArgs():
-        args = obj.get("args") if obj.get("args") is not None else []
+        args = obj.get("args") or []
         args.append(value)
         obj["args"] = args
 
@@ -87,18 +88,16 @@ def tokenize(lines):
         for w in l.split():
             (tokenType, value) = GetToken(w)
 
-            if log == True:
+            if log:
                 print((tokenType, value))
 
             if tokenType == Token_Symbol.SingleTagOpener:
-                obj = {}
-                obj["tag"] = value
+                obj = {"tag": value}
                 ret.append(obj)
 
             if tokenType == Token_Symbol.TagOpener:
                 joinSentence()
-                obj = {}
-                obj["tag"] = value
+                obj = {"tag": value}
 
             # Implicit tag building
             if tokenType == Token_Symbol.SingleStringArg:
@@ -112,7 +111,7 @@ def tokenize(lines):
 
             if tokenType == Token_Symbol.Word:
                 # Words can appear in sentences or used as tag string literal argument
-                if isTagBuilding == True:
+                if isTagBuilding:
                     tempargs.append(value)
                 else:
                     words.append(value)
@@ -122,7 +121,7 @@ def tokenize(lines):
                 isTagBuilding = True
 
             if tokenType == Token_Symbol.EndStringArg:
-                args = obj.get("args") if obj.get("args") is not None else []
+                args = obj.get("args") or []
                 tempargs.append(value)
                 args.append(" ".join(tempargs))
                 obj["args"] = args
@@ -130,9 +129,10 @@ def tokenize(lines):
 
             if tokenType == Token_Symbol.TagOpenerWithSlash:
                 joinSentence()
-                obj = {}
-                obj["tag"] = value
-                obj["type"] = "close"
+                obj = {
+                    "tag": value,
+                    "type": "close"
+                }
                 ret.append(obj)
 
     return ret
