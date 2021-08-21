@@ -15,7 +15,6 @@ from config import get_config
 
 def generate(params):
     # HMAC generation
-    # Add seconds of a day
 
     conf = get_config()
 
@@ -35,14 +34,16 @@ def generate(params):
     if baseUrl is None:
         raise ReferenceError("missing resource argument")
 
+    # Add seconds of a day
     expires = str(int(time.time() + 86400))
+
     hmacBuilder = hmac.new(bytearray(privateKey + expires, 'utf-8'),
                            resource.encode('utf-8'), hashlib.sha256)
     hmacHex = hmacBuilder.hexdigest()
 
     obj = {}
 
-    obj["expires"] = expires
-    obj["hmacHex"] = hmacHex
-    obj["publicKey"] = conf["publicKey"]
+    obj["EXPIRES"] = expires
+    obj["HMAC"] = hmacHex
+    obj["APIKEY"] = conf["publicKey"]
     return obj

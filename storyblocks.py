@@ -11,7 +11,39 @@ log = isGlobalLog()
 
 
 def buildUrl(args, gen):
-    return f'{args["baseUrl"]}{args["resource"]}?APIKEY={gen["publicKey"]}&EXPIRES={gen["expires"]}&HMAC={gen["hmacHex"]}&project_id=1&user_id=1'
+
+    qs = None
+    prefix = ""
+    for k in ["APIKEY", "EXPIRES", "HMAC"]:
+        if qs is not None:
+            prefix = "&"
+        else:
+            qs = ""
+            prefix = "?"
+        qs = qs + f'{prefix}{k}={gen[k]}'
+
+    url = f'{args["baseUrl"]}{args["resource"]}{qs}&project_id=1&user_id=1'
+
+    return url
+
+
+def makeRequest(args, keypairs=None):
+
+    gen = generate(args)
+
+    if gen is None:
+        print("Hex generation unsuccesful, bypass")
+        return
+
+    url = f'{buildUrl(args, gen)}'
+
+    if keypairs:
+        suffix = ""
+        for k, v in keypairs.items():
+            suffix = f'{suffix}&{k}={v}'
+        url = url + suffix
+
+    return requests.get(url).json()
 
 
 def storyblocksImgProvider(name):
@@ -25,18 +57,7 @@ def storyblocksImgProvider(name):
         "resource": "/api/v2/images/search"
     }
 
-    gen = generate(args)
-
-    if gen is None:
-        print("Hex generation unsuccesful, bypass")
-        return
-
-    # print("storyblocks hex:")
-    # print(gen)
-
-    url = f'{buildUrl(args, gen)}&keywords={name}'
-
-    result = requests.get(url).json()
+    result = makeRequest(args, {"keywords": name})
 
     total = len(result["results"])
 
@@ -55,6 +76,7 @@ def storyblocksImgProvider(name):
 
     actualImg = result["results"][index]
 
+    # actually downloading the thumbnail
     imgLink = actualImg["thumbnail_url"]
 
     if log:
@@ -74,6 +96,7 @@ def storyblocksImgProvider(name):
 
 
 def storyblocksMusicProvider(name):
+
     if(log):
         print("")
         print("calling storyblocks music provider with arg: " + name)
@@ -83,21 +106,13 @@ def storyblocksMusicProvider(name):
         "resource": "/api/v2/audio/search"
     }
 
-    gen = generate(args)
-
-    if gen is None:
-        print("Hex generation unsuccesful, bypass")
-        return
-
-    url = f'{buildUrl(args, gen)}&keywords={name}'
-
-    result = requests.get(url).json()
+    result = makeRequest(args, {"keywords": name})
 
     total = len(result["results"])
 
     if not total > 0:
         if log:
-            print("Couldnt find image for: " + name)
+            print("Couldnt find music for: " + name)
         return
 
     if log:
@@ -107,18 +122,10 @@ def storyblocksMusicProvider(name):
 
     music = result["results"][index]
 
-    print(music)
+    args["resource"] = f"/api/v2/audio/stock-item/download/{str(music['id'])}"
 
-    args["resource"] = "/api/v2/audio/stock-item/download/:stock_item_id".replace(
-        ":stock_item_id", str(music["id"]))
-    print(args)
+    fileResult = makeRequest(args)
 
-    gen = generate(args)
-
-    url = buildUrl(args, gen)
-
-    fileResult = requests.get(url).json()
-
-    # Avoid Downloading
+    # Avoid Downloading 5/5 Limit
     #r = requests.get(fileResult["MP3"], allow_redirects=True)
     #open(f'Music/{name}.mp3', 'wb').write(r.content)
