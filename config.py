@@ -3,9 +3,11 @@ import os
 
 
 def get_config():
-    if not os.path.isfile('config.json'):
+
+    file = "config.json"
+
+    if not os.path.isfile(file):
         return None
 
-    with open("config.json") as json_data_file:
-        data = json.load(json_data_file)
-        return data
+    with open(file) as json_data:
+        return json.load(json_data)

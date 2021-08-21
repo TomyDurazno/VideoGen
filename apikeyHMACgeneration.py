@@ -14,17 +14,20 @@ def generate(params):
         print("missing config file")
         return None
 
-    privateKey = conf["privateKey"]
-
-    baseUrl = params.get("baseUrl")
-
-    if baseUrl is None:
-        raise ReferenceError("missing baseUrl argument")
-
     resource = params.get("resource")
 
-    if baseUrl is None:
+    if resource is None:
         raise ReferenceError("missing resource argument")
+
+    privateKey = conf["privateKey"]
+
+    if privateKey is None:
+        raise ReferenceError("missing privateKey argument")
+
+    publicKey = conf["publicKey"]
+
+    if publicKey is None:
+        raise ReferenceError("missing publicKey argument")
 
     # Add seconds of a day
     expires = str(int(time.time() + 86400))
@@ -36,7 +39,7 @@ def generate(params):
     obj = {
         "EXPIRES": expires,
         "HMAC": hmacHex,
-        "APIKEY": conf["publicKey"]
+        "APIKEY": publicKey
     }
 
     return obj

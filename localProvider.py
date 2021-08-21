@@ -3,22 +3,20 @@ from globalSources import Config
 log = Config.LOG
 
 
+def notImplemented(name, provider):
+    print("")
+    print(f'calling {provider} provider with arg: {name}')
+    print(
+        "There is no actual implementation for {provider}, skipping")
+
+
 def localImgProvider(name):
-    if(log):
-        print("")
-        print("calling local image provider with arg: " + name)
-        print("There is no actual implementation for the image provider, skipping")
+    notImplemented(name, "local image")
 
 
 def localMusicProvider(name):
-    if(log):
-        print("")
-        print("calling local music provider with arg: " + name)
-        print("There is no actual implementation for the local music provider, skipping")
+    notImplemented(name, "local music")
 
 
 def localVideoProvider(name):
-    if(log):
-        print("")
-        print("calling local video provider with arg: " + name)
-        print("There is no actual implementation for the local video provider, skipping")
+    notImplemented(name, "local video")

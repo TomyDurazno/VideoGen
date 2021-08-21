@@ -15,7 +15,7 @@ uniqueNames = Config.UNIQUE_NAMES
 
 def imgurProvider(name):
 
-    if(log):
+    if log:
         print("")
         print("calling imgur provider with arg: " + name)
 
@@ -26,13 +26,13 @@ def imgurProvider(name):
         images = gallery.get("images")
 
         if images is None:
-            if(log):
+            if log:
                 print("not found images for: " + name)
                 return
 
         total = len(images)
 
-        if(log):
+        if log:
             print(name)
             print("Images found: " + str(total))
 
@@ -53,18 +53,14 @@ def imgurProvider(name):
             uniqueName = link.split(
                 "/").pop().split(".")[0] if uniqueNames else name
 
-            if extension not in ["jpg", "png", "jpeg"]:
+            if extension not in ["jpg", "jpeg", "png"]:
                 if log:
                     print("File found is not an image, downloading it anyways")
 
             path = "Images/" + name
-            isExist = os.path.exists(path)
 
-            if not isExist:
-
-                # Create a new directory because it does not exist
+            if not os.path.exists(path):
                 os.makedirs(path)
-
                 if log:
                     print("New directory was created")
 
@@ -73,14 +69,18 @@ def imgurProvider(name):
                 f.write(img.content)
                 return uniqueName
 
+        # try/except
+        def call(index):
+            uqname = "NN"
+            try:
+                uqname = downloadImg(index)
+            except:
+                print("Exception: " + uqname)
+
         if not fullMode:
             # pop a random rample
             index = sample(range(total), 1).pop()
-            downloadImg(index)
-            return
+            call(index)
         else:
             for i in range(total):
-                try:
-                    uqname = downloadImg(i)
-                except:
-                    print("Exception:" + uqname)
+                call(i)

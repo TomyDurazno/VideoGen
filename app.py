@@ -32,7 +32,7 @@ for token in tokens:
 
         provider = providers.get(tag)
 
-        if(provider is not None):
+        if provider is not None:
             args = token.get("args")
             args = args if args is not None else []
 

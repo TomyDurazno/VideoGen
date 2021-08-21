@@ -28,6 +28,7 @@ def buildUrl(args, gen):
 
 def makeRequest(args, keypairs=None):
 
+    # apikeyHMACgeneration
     gen = generate(args)
 
     if gen is None:
@@ -40,6 +41,7 @@ def makeRequest(args, keypairs=None):
         suffix = ""
         for k, v in keypairs.items():
             suffix = f'{suffix}&{k}={v}'
+
         url = url + suffix
 
     return requests.get(url).json()
@@ -47,7 +49,7 @@ def makeRequest(args, keypairs=None):
 
 def storyblocksImgProvider(name):
 
-    if(log):
+    if log:
         print("")
         print("calling storyblocks image provider with arg: " + name)
 
@@ -70,7 +72,7 @@ def storyblocksImgProvider(name):
 
     def downloadImg(index):
 
-        if(log):
+        if log:
             print("attempting download of index: " + str(index))
 
         actualImg = result["results"][index]
@@ -88,7 +90,7 @@ def storyblocksImgProvider(name):
 
         extension = link.split(".").pop()
 
-        if(extension not in ["jpg", "png", "jpeg"]):
+        if extension not in ["jpg", "png", "jpeg"]:
             print("File found is not an image, downloading it anyways")
 
         path = "Images/" + name
@@ -103,21 +105,26 @@ def storyblocksImgProvider(name):
             f.write(img.content)
             return uniqueName
 
+    # try/except
+    def call(index):
+        uqname = "NN"
+        try:
+            uqname = downloadImg(index)
+        except:
+            print("Exception: " + uqname)
+
     if not fullMode:
         # pop a random rample
         index = sample(range(total), 1).pop()
-        downloadImg(index)
+        call(index)
     else:
         for i in range(total):
-            try:
-                uqname = downloadImg(i)
-            except:
-                print("Exception:" + uqname)
+            call(i)
 
 
 def storyblocksMusicProvider(name):
 
-    if(log):
+    if log:
         print("")
         print("calling storyblocks music provider with arg: " + name)
 
@@ -152,7 +159,7 @@ def storyblocksMusicProvider(name):
 
 
 def storyblocksVideoProvider(name):
-    if(log):
+    if log:
         print("")
         print("calling storyblocks video provider with arg: " + name)
         print("There is no actual implementation for storyblocks video provider, skipping")
