@@ -102,7 +102,7 @@ def storyblocksImgProvider(name):
         if not os.path.exists(path):
             os.makedirs(path)
             if log:
-                print("New directory is created")
+                print(f'New directory created: {name}')
 
         with open(f'{path}/{uniqueName}.{extension}', "wb") as f:
             f.write(img.content)

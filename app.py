@@ -1,4 +1,5 @@
-from InputParser.tokenizer import Token_Types, tokenize, Token_Keys
+from time import process_time
+from Parser.tokenizer import tokenize, Token_Types, Token_Keys
 from Providers.providers import tag_providers
 from globalSources import GlobalConfig
 
@@ -20,12 +21,16 @@ if parserOnly:
 
 if log:
     print("")
+
     for token in tokens:
         print(token)
+
     print("")
+
     print(f'name: {name}')
     print(f'log: {log}')
     print(f'mode: {mode}')
+
     print('')
 
 if tokenOnly:

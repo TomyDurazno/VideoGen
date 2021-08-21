@@ -6,7 +6,7 @@ log = GlobalConfig.LOG
 
 class Token_Symbols:
     Start = "Start"
-    SingleTagOpener = "SingleTagOpener"
+    SingleTagOpenerAndCloser = "SingleTagOpenerAndCloser"
     TagOpener = "TagOpener"
     TagOpenerWithSlash = "TagOpenerWithSlash"
     TagCloser = "TagCloser"
@@ -57,27 +57,31 @@ def isQuoteCloser(s):
     return s[-1] == Token_Values.Quote
 
 
-def invalidTagPosition(s):
+def invalidTagPosition(s, i):
     open = [m.start() for m in re.finditer(Token_Values.Open, s)]
 
     if len(open) > 1 or (len(open) and open[0] != 0):
         raise ValueError(
-            f'Wrong position: {open[0]} for tag {Token_Values.Open} at: {s}')
+            f'Wrong position ({open[0]}) for tag {Token_Values.Open} at line {i}: {s}')
 
     close = [m.start() for m in re.finditer(Token_Values.Close, s)]
 
     if len(close) > 1 or (len(close) and close[0] != len(s) - 1):
         raise ValueError(
-            f'Wrong position: {close[0]} for tag {Token_Values.Close} at: {s}')
+            f'Wrong position ({close[0]}) for tag {Token_Values.Close} at line {i}: {s}')
 
     return False
 
 
-def GetToken(s):
+def GetToken(s, i):
+
+    # raises ValueError
+    invalidTagPosition(s, i)
+
     if isTagOpenerWithSlash(s):
         return (Token_Symbols.TagOpenerWithSlash, s[2:-1])
     if isTagOpener(s) and isTagCloser(s):
-        return (Token_Symbols.SingleTagOpener, s[1:-1])
+        return (Token_Symbols.SingleTagOpenerAndCloser, s[1:-1])
     if isTagOpener(s):
         return (Token_Symbols.TagOpener, s[1:])
     if isTagCloser(s):
@@ -92,8 +96,7 @@ def GetToken(s):
             return (Token_Symbols.StartStringArg, aux)
     if isQuoteCloser(s):
         return (Token_Symbols.EndStringArg, s.replace(Token_Values.Quote, Token_Values.Empty))
-    if not invalidTagPosition(s):
-        return (Token_Symbols.Word, s.replace(Token_Values.Quote, Token_Values.Empty))
+    return (Token_Symbols.Word, s.replace(Token_Values.Quote, Token_Values.Empty))
 
 
 def tokenize(lines):
@@ -104,6 +107,8 @@ def tokenize(lines):
     obj = {}
     tempargs = []
     isTagBuilding = False
+    isStringLiteralBuilding = False
+    stringLiteralAcum = []
 
     # The return type is an array with all the symbols
     ret = []
@@ -123,24 +128,29 @@ def tokenize(lines):
         args.append(value)
         obj[Token_Keys.Args] = args
 
-    for l in lines:
+    for i, l in enumerate(lines):
         for w in l.split():
-            (tokenType, value) = GetToken(w)
+            (tokenType, value) = GetToken(w, i + 1)  # pass the text line
 
             if log:
                 print((tokenType, value))
 
-            if tokenType == Token_Symbols.SingleTagOpener:
+            # <laugh> tag for example
+            if tokenType == Token_Symbols.SingleTagOpenerAndCloser:
                 obj = {Token_Keys.Tag: value}
                 ret.append(obj)
 
             if tokenType == Token_Symbols.TagOpener:
+                isTagBuilding = True
                 joinSentence()
                 obj = {Token_Keys.Tag: value}
 
-            # Implicit tag building
+            # No Implicit tag building, we can be builduing a string literal
             if tokenType == Token_Symbols.SingleStringArg:
-                setArgs()
+                if isTagBuilding:
+                    setArgs()
+                else:
+                    words.append(value)
 
             if tokenType == Token_Symbols.TagCloser:
                 setArgs()
@@ -149,22 +159,36 @@ def tokenize(lines):
                 isTagBuilding = False
 
             if tokenType == Token_Symbols.Word:
-                # Words can appear in sentences or used as tag string literal argument
+                if isTagBuilding:
+                    # Words can appear in sentences or used as tag string literal argument
+                    tempargs.append(value)
+                else:
+                    # String literal expression
+                    if isStringLiteralBuilding:
+                        stringLiteralAcum.append(value)
+                    else:
+                        words.append(value)
+
+            if tokenType == Token_Symbols.StartStringArg:
                 if isTagBuilding:
                     tempargs.append(value)
                 else:
-                    words.append(value)
-
-            if tokenType == Token_Symbols.StartStringArg:
-                tempargs.append(value)
-                isTagBuilding = True
+                    isStringLiteralBuilding = True
+                    stringLiteralAcum.append(value)
 
             if tokenType == Token_Symbols.EndStringArg:
-                args = obj.get(Token_Keys.Args) or []
-                tempargs.append(value)
-                args.append(Token_Values.Separator.join(tempargs))
-                obj[Token_Keys.Args] = args
-                tempargs = []
+                if isTagBuilding:
+                    args = obj.get(Token_Keys.Args) or []
+                    tempargs.append(value)
+                    args.append(Token_Values.Separator.join(tempargs))
+                    obj[Token_Keys.Args] = args
+                    tempargs = []
+                else:
+                    stringLiteralAcum.append(value)
+                    literal = f'{Token_Values.Quote}{Token_Values.Separator.join(stringLiteralAcum)}{Token_Values.Quote}'
+                    words.append(literal)
+                    stringLiteralAcum = []
+                    isStringLiteralBuilding = False
 
             if tokenType == Token_Symbols.TagOpenerWithSlash:
                 joinSentence()
