@@ -1,4 +1,4 @@
-<music "laser" "storyblocks">
+<music "laser" "local" ".mp3">
 Los noventas son la década que realmente permitió a los videojuegos prosperar. <img "fun video games" "imgur"> 
 Con innovaciones masivas en los juegos, el mercado de consolas y PCs, <img "kid playing videogames and laughing" "imgur"> 
 miles de juego –BUENOS JUEGOS- <img "Best video games" "imgur"> invadieron el mercado. <img "Super Mario 64" "imgur">

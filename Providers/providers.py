@@ -24,11 +24,13 @@ providers = {
 
 
 def getProviders(key):
-    def getImplementation(name, source):
+    def getImplementation(*args):
+        source = args[1]
         provider = providers.get(key).get(source)
 
         if provider:
-            provider(name)
+            nargs = provider.__code__.co_argcount
+            provider(*args[0:nargs])
         else:
             if log:
                 print("not found provider for source: " + source)

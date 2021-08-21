@@ -6,15 +6,14 @@ log = Config.LOG
 def notImplemented(name, provider):
     print("")
     print(f'calling {provider} provider with arg: {name}')
-    print(
-        "There is no actual implementation for {provider}, skipping")
+    print(f'There is no actual implementation for {provider}, skipping')
 
 
 def localImgProvider(name):
     notImplemented(name, "local image")
 
 
-def localMusicProvider(name):
+def localMusicProvider(name, source, extension):
     notImplemented(name, "local music")
 
 
