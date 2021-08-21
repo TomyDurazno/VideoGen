@@ -32,4 +32,8 @@ Status 4:
 	
 		named him the "Artist of the Decade (2000–2009)". The Marshall Mathers LP 
 		
-	
+Status 5:
+
+	Se hizo una primera implementación de storyblocks como image provider y se lo vió funcionar,
+	el search devuelve de cada imagen un thumbnail o un preview, faltaría buscar la imagen específicamente por id en 
+	el endpoint dedicado

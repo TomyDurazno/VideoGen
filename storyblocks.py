@@ -42,9 +42,15 @@ def storyblocksImgProvider(name):
     if not total > 0:
         if log:
             print("Couldnt find image for: " + name)
-            return
+        return
+
+    if log:
+        print("Images found: " + str(total))
 
     index = sample(range(total), 1).pop()
+
+    if(log):
+        print("attempting download of index: " + str(index))
 
     imgLink = result["results"][index]["thumbnail_url"]
 
