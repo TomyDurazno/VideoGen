@@ -106,9 +106,10 @@ def tokenize(lines):
     # Temp object used to build tags
     obj = {}
     tempargs = []
+    stringLiteralAcum = []
+    # Flags
     isTagBuilding = False
     isStringLiteralBuilding = False
-    stringLiteralAcum = []
 
     # The return type is an array with all the symbols
     ret = []
@@ -116,10 +117,9 @@ def tokenize(lines):
     # Join all acumulated words into a sentence
     def joinSentence():
         if len(words) > 0:
-            wx = {
+            ret.append({
                 Token_Keys.Sentence: Token_Values.Separator.join(words)
-            }
-            ret.append(wx)
+            })
             words.clear()
 
     # set temp object args
@@ -141,8 +141,8 @@ def tokenize(lines):
                 ret.append(obj)
 
             if tokenType == Token_Symbols.TagOpener:
-                isTagBuilding = True
                 joinSentence()
+                isTagBuilding = True
                 obj = {Token_Keys.Tag: value}
 
             # No Implicit tag building, we can be builduing a string literal
@@ -192,10 +192,9 @@ def tokenize(lines):
 
             if tokenType == Token_Symbols.TagOpenerWithSlash:
                 joinSentence()
-                obj = {
+                ret.append({
                     Token_Keys.Tag: value,
                     Token_Keys.Type: Token_Types.Close
-                }
-                ret.append(obj)
+                })
 
     return ret
