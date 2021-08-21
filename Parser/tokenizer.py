@@ -141,6 +141,11 @@ def tokenize(lines):
                 ret.append(obj)
 
             if tokenType == Token_Symbols.TagOpener:
+                if isTagBuilding:
+                    # Already a tag open
+                    raise ValueError(
+                        f'Non closing tag {Token_Values.Open} at line {i}: {Token_Values.Open}{value}')
+
                 joinSentence()
                 isTagBuilding = True
                 obj = {Token_Keys.Tag: value}
@@ -153,6 +158,11 @@ def tokenize(lines):
                     words.append(value)
 
             if tokenType == Token_Symbols.TagCloser:
+                if not isTagBuilding:
+                    # Already a tag close
+                    raise ValueError(
+                        f'Non closing tag {Token_Values.Close} at line {i}: {Token_Values.Close}{value}')
+
                 setArgs()
                 ret.append(obj)
                 obj = {}
