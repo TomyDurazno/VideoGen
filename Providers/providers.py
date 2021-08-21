@@ -1,7 +1,7 @@
 from globalSources import Config
-from imgur import imgurProvider
-from storyblocks import storyblocksImgProvider, storyblocksMusicProvider, storyblocksVideoProvider
-from localProvider import localImgProvider, localMusicProvider, localVideoProvider
+from Providers.imgur import imgurProvider
+from Providers.storyblocks import storyblocksImgProvider, storyblocksMusicProvider, storyblocksVideoProvider
+from Providers.localProvider import localImgProvider, localMusicProvider, localVideoProvider
 
 log = Config.LOG
 

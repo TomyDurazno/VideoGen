@@ -1,5 +1,5 @@
 from tokenizer import tokenize
-from providers import tag_providers
+from Providers.providers import tag_providers
 from globalSources import Config
 
 log = Config.LOG

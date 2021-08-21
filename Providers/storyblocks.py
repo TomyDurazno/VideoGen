@@ -1,7 +1,7 @@
 import os
 from random import sample
 from globalSources import Config
-from apikeyHMACgeneration import generate
+from Providers.apikeyHMACgeneration import generate
 import requests
 
 log = Config.LOG
