@@ -8,9 +8,6 @@ log = Config.LOG
 fullMode = Config.FULLMODE
 uniqueNames = Config.UNIQUE_NAMES
 
-# example url
-# https://api.graphicstock.com/api/v2/images/search?APIKEY=test_84db697b2f4bfba32add84758f6bd501ea3ccf805ae53dff4aae6a759c3&EXPIRES=1629588362&HMAC=0a50e32c177c11c59cc4586af69dccbd83b60d0d852549625f245de8e67d7a13&project_id=1&user_id=1&keywords=guitars
-
 
 def buildUrl(args, gen):
 
@@ -151,3 +148,10 @@ def storyblocksMusicProvider(name):
     # Avoid Downloading 5/5 Limit
     # r = requests.get(fileResult["MP3"], allow_redirects=True)
     # open(f'Music/{name}.mp3', 'wb').write(r.content)
+
+
+def storyblocksVideoProvider(name):
+    if(log):
+        print("")
+        print("calling storyblocks video provider with arg: " + name)
+        print("There is no actual implementation for storyblocks video provider, skipping")

@@ -22,7 +22,7 @@ if log:
 
     print("")
 
-providrs = tag_providers()
+providers = tag_providers()
 
 for token in tokens:
     # find if the token is a tag
@@ -30,17 +30,17 @@ for token in tokens:
 
     if tag is not None and token.get("type") != "close":
 
-        providr = providrs.get(tag)
+        provider = providers.get(tag)
 
-        if(providr is not None):
+        if(provider is not None):
             args = token.get("args")
             args = args if args is not None else []
 
             # invoke the provider with the arguments
-            try:
-                providr(*args)
-            except:
-                print("An exception occurred")
+            # try:
+            provider(*args)
+            # except:
+            #print("An exception occurred")
 
         else:
             print("Non matching provider found: " + tag)

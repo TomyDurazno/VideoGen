@@ -1,61 +1,46 @@
 from globalSources import Config
 from imgur import imgurProvider
-from storyblocks import storyblocksImgProvider, storyblocksMusicProvider
-from localProvider import localImgProvider, localMusicProvider
+from storyblocks import storyblocksImgProvider, storyblocksMusicProvider, storyblocksVideoProvider
+from localProvider import localImgProvider, localMusicProvider, localVideoProvider
 
 log = Config.LOG
 
-# music providers dictionary
 
-
-def get_music():
-    m = {
+providers = {
+    "music": {
         "storyblocks": storyblocksMusicProvider,
         "local": localMusicProvider
-    }
-    return m
-
-# images providers dictionary
-
-
-def get_imgs():
-    i = {
+    },
+    "img": {
         "imgur": imgurProvider,
         "storyblocks": storyblocksImgProvider,
         "local": localImgProvider
+    },
+    "video": {
+        "storyblocks": storyblocksVideoProvider,
+        "local": localVideoProvider
     }
-    return i
+}
 
 
-def getImgProviders(name, source):
+def getProviders(key):
+    def getImplementation(name, source):
+        provider = providers.get(key).get(source)
 
-    provider = get_imgs().get(source)
+        if provider is not None:
+            provider(name)
+        else:
+            if log:
+                print("not found provider for source: " + source)
+        return
 
-    if provider is not None:
-        provider(name)
-    else:
-        if log:
-            print("not found provider for source: " + source)
-    return 0
-
-
-def getMusicProviders(name, source):
-
-    provider = get_music().get(source)
-
-    if provider is not None:
-        provider(name)
-    else:
-        if log:
-            print("not found provider for source: " + source)
-    return 0
+    return getImplementation
 
 
 def tag_providers():
 
-    obj = {
-        "music": getMusicProviders,
-        "img": getImgProviders,
-    }
+    obj = {}
+    for k in providers.keys():
+        obj[k] = getProviders(k)
 
     return obj
