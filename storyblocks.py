@@ -1,10 +1,12 @@
-import requests
+import os
 from random import sample
-from globalSources import isGlobalLog
+from globalSources import Config
 from apikeyHMACgeneration import generate
+import requests
 
-
-log = isGlobalLog()
+log = Config.LOG
+fullMode = Config.FULLMODE
+uniqueNames = Config.UNIQUE_NAMES
 
 # example url
 # https://api.graphicstock.com/api/v2/images/search?APIKEY=test_84db697b2f4bfba32add84758f6bd501ea3ccf805ae53dff4aae6a759c3&EXPIRES=1629588362&HMAC=0a50e32c177c11c59cc4586af69dccbd83b60d0d852549625f245de8e67d7a13&project_id=1&user_id=1&keywords=guitars
@@ -69,30 +71,50 @@ def storyblocksImgProvider(name):
     if log:
         print("Images found: " + str(total))
 
-    index = sample(range(total), 1).pop()
+    def downloadImg(index):
 
-    if(log):
-        print("attempting download of index: " + str(index))
+        if(log):
+            print("attempting download of index: " + str(index))
 
-    actualImg = result["results"][index]
+        actualImg = result["results"][index]
 
-    # actually downloading the thumbnail
-    imgLink = actualImg["thumbnail_url"]
+        # actually downloading the thumbnail
+        link = actualImg["thumbnail_url"]
 
-    if log:
-        print("Image found: " + imgLink)
+        if log:
+            print("Image found: " + link)
 
-    img = requests.get(imgLink)
+        img = requests.get(link)
 
-    extension = imgLink.split(".").pop()
+        uniqueName = link.split(
+            "/").pop().split(".")[0] if uniqueNames else name
 
-    if(extension not in ["jpg", "png", "jpeg"]):
-        print("File found is not an image, downloading it anyways")
+        extension = link.split(".").pop()
 
-    with open("Images/" + name + "." + extension, "wb") as f:
-        # download image to local folder
-        f.write(img.content)
-        return
+        if(extension not in ["jpg", "png", "jpeg"]):
+            print("File found is not an image, downloading it anyways")
+
+        path = "Images/" + name
+        isExist = os.path.exists(path)
+
+        if not isExist:
+
+            # Create a new directory because it does not exist
+            os.makedirs(path)
+            print("The new directory is created!")
+
+        with open(f'{path}/{uniqueName}.{extension}', "wb") as f:
+            # download image to local folder
+            f.write(img.content)
+            return
+
+    if not fullMode:
+        # pop a random rample
+        index = sample(range(total), 1).pop()
+        downloadImg(index)
+    else:
+        for i in range(total):
+            downloadImg(i)
 
 
 def storyblocksMusicProvider(name):
@@ -127,5 +149,5 @@ def storyblocksMusicProvider(name):
     fileResult = makeRequest(args)
 
     # Avoid Downloading 5/5 Limit
-    #r = requests.get(fileResult["MP3"], allow_redirects=True)
-    #open(f'Music/{name}.mp3', 'wb').write(r.content)
+    # r = requests.get(fileResult["MP3"], allow_redirects=True)
+    # open(f'Music/{name}.mp3', 'wb').write(r.content)

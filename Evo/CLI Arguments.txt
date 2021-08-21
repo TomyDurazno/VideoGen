@@ -1,0 +1,5 @@
+py app.py 
+	file=ufc.txt  
+	log=verbose
+	mode=full 
+	

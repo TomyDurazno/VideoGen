@@ -1,4 +1,7 @@
-from globalSources import isGlobalLog
+from globalSources import Config
+
+log = Config.LOG
+
 
 class Token_Symbol:
     Start = "Start"
@@ -12,56 +15,61 @@ class Token_Symbol:
     EndStringArg = "EndStringArg"
     Word = "Word"
 
+
 def isTagOpener(s):
     return s[0] == '<'
+
 
 def isTagOpenerWithSlash(s):
     return isTagOpener(s) and s[1] == '/'
 
+
 def isTagCloser(s):
     return s[-1] == '>'
+
 
 def isQuoteOpener(s):
     return s[0] == '"'
 
+
 def isQuoteCloser(s):
     return s[-1] == '"'
+
 
 def GetToken(s):
     if isTagOpenerWithSlash(s):
         return (Token_Symbol.TagOpenerWithSlash, s[2:-1])
     if isTagOpener(s) and isTagCloser(s):
-       return (Token_Symbol.SingleTagOpener, s[1:-1]) 
+        return (Token_Symbol.SingleTagOpener, s[1:-1])
     if isTagOpener(s):
-       return (Token_Symbol.TagOpener, s[1:]) 
+        return (Token_Symbol.TagOpener, s[1:])
     if isTagCloser(s):
-       return (Token_Symbol.TagCloser, s[:-1].replace('"', ''))
+        return (Token_Symbol.TagCloser, s[:-1].replace('"', ''))
     if isQuoteOpener(s):
         if isQuoteCloser(s):
             return (Token_Symbol.SingleStringArg, s.replace('"', ''))
         else:
-        #acumulative case
-            aux = s.replace('"', '').replace('>','')
+            # acumulative case
+            aux = s.replace('"', '').replace('>', '')
             return (Token_Symbol.StartStringArg, aux)
     if isQuoteCloser(s):
-        return (Token_Symbol.EndStringArg, s.replace('"', ''))    
+        return (Token_Symbol.EndStringArg, s.replace('"', ''))
     return (Token_Symbol.Word, s.replace('"', ''))
 
-log = isGlobalLog()
 
 def tokenize(lines):
-    
-    #Words acumulator
-    words = [] 
-    #Temp object used to build tags
+
+    # Words acumulator
+    words = []
+    # Temp object used to build tags
     obj = {}
     tempargs = []
     isTagBuilding = False
 
-    #The return type is an array with all the symbols
+    # The return type is an array with all the symbols
     ret = []
 
-    #Join all acumulated words into a sentence
+    # Join all acumulated words into a sentence
     def joinSentence():
         if len(words) > 0:
             wx = {}
@@ -69,30 +77,30 @@ def tokenize(lines):
             ret.append(wx)
             words.clear()
 
-    #set temp object args
+    # set temp object args
     def setArgs():
         args = obj.get("args") if obj.get("args") is not None else []
         args.append(value)
         obj["args"] = args
 
     for l in lines:
-        for w in l.split():            
+        for w in l.split():
             (tokenType, value) = GetToken(w)
 
             if log == True:
                 print((tokenType, value))
-            
+
             if tokenType == Token_Symbol.SingleTagOpener:
                 obj = {}
                 obj["tag"] = value
-                ret.append(obj)  
+                ret.append(obj)
 
-            if tokenType == Token_Symbol.TagOpener:            
+            if tokenType == Token_Symbol.TagOpener:
                 joinSentence()
                 obj = {}
-                obj["tag"] = value                
-                
-            #Implicit tag building
+                obj["tag"] = value
+
+            # Implicit tag building
             if tokenType == Token_Symbol.SingleStringArg:
                 setArgs()
 
@@ -103,7 +111,7 @@ def tokenize(lines):
                 isTagBuilding = False
 
             if tokenType == Token_Symbol.Word:
-                #Words can appear in sentences or used as tag string literal argument
+                # Words can appear in sentences or used as tag string literal argument
                 if isTagBuilding == True:
                     tempargs.append(value)
                 else:
@@ -111,7 +119,7 @@ def tokenize(lines):
 
             if tokenType == Token_Symbol.StartStringArg:
                 tempargs.append(value)
-                isTagBuilding = True                
+                isTagBuilding = True
 
             if tokenType == Token_Symbol.EndStringArg:
                 args = obj.get("args") if obj.get("args") is not None else []
@@ -120,11 +128,11 @@ def tokenize(lines):
                 obj["args"] = args
                 tempargs = []
 
-            if tokenType == Token_Symbol.TagOpenerWithSlash:                
+            if tokenType == Token_Symbol.TagOpenerWithSlash:
                 joinSentence()
                 obj = {}
                 obj["tag"] = value
                 obj["type"] = "close"
-                ret.append(obj)              
+                ret.append(obj)
 
     return ret
