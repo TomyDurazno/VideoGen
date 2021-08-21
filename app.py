@@ -6,13 +6,14 @@ log = isGlobalLog()
 
 name = nameFromArgs()
 
-if log:
-   if name is None:
+if name is None:
+    if log:
         print("using story from default file guion.txt")
-        name = "Guiones/guion.txt"
-   else:
+    name = "Guiones/guion.txt"
+else:
+    if log:
         print("using story from: " + name)
-        name = "Guiones/" + name
+    name = "Guiones/" + name
 
 f = open(name, "r", encoding="utf-8")
 

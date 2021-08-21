@@ -131,3 +131,4 @@ dmypy.json
 #folders
 /Scripts
 /Images
+config.json

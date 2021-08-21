@@ -24,5 +24,9 @@ In 2021, Endeavor bought out Zuffa's other owners at a valuation of $1.7 billion
 </music>
 
 <music "famous" "local">
-Some famous fighters that competed in the UFC are Conor McGregor <img "Conor McGregor" "imgur"> , Ronda Roussey <img "Ronda Rousey" "imgur"> , Khabib Nurmagomedov <img "Khabib Nurmagomedov" "imgur"> , Jon Jones <img "Jon Jones" "imgur"> , Anderson Silva <img "Anderson Silva" "imgur"> to name a few
+Some famous fighters that competed in the UFC are Conor McGregor <img "Conor McGregor" "imgur"> , 
+Ronda Roussey <img "Ronda Rousey" "imgur"> , 
+Khabib Nurmagomedov <img "Khabib Nurmagomedov" "imgur"> , 
+Jon Jones <img "Jon Jones" "imgur"> , 
+Anderson Silva <img "Anderson Silva" "imgur"> to name a few
 </music>
