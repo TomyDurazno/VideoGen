@@ -10,9 +10,13 @@ def fromArgs(s):
     return getKeyPair(s)
 
 
+def singleArg(s):
+    return s in sys.argv
+
+
 class Config:
 
-    LOG = fromArgs("log") == "verbose"
+    LOG = singleArg("log") or fromArgs("log") == "verbose"
     FULLMODE = fromArgs("mode") == "full"
     UNIQUE_NAMES = FULLMODE
     NAME = fromArgs("file")

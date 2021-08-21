@@ -4,14 +4,6 @@ import hmac
 import hashlib
 from config import get_config
 
-# Provided by Storyblocks
-#publicKey = "test_84db697b2f4bfba32add84758f6bd501ea3ccf805ae53dff4aae6a759c3"
-#privateKey = "test_b97d62ffd8682e556014c4b25a9ebfed66f968570a2a2e5d3e0d6187580"
-
-# url info
-#baseUrl = "https://api.graphicstock.com"
-#resource = "/api/v2/images/search"
-
 
 def generate(params):
     # HMAC generation
@@ -41,9 +33,10 @@ def generate(params):
                            resource.encode('utf-8'), hashlib.sha256)
     hmacHex = hmacBuilder.hexdigest()
 
-    obj = {}
+    obj = {
+        "EXPIRES": expires,
+        "HMAC": hmacHex,
+        "APIKEY": conf["publicKey"]
+    }
 
-    obj["EXPIRES"] = expires
-    obj["HMAC"] = hmacHex
-    obj["APIKEY"] = conf["publicKey"]
     return obj
