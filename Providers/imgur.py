@@ -4,7 +4,7 @@ from random import sample
 from globalSources import Config
 
 # Imgur url and auth key
-imgur_url = "https://api.imgur.com/3/gallery/search?q="
+imgur_url = "https://api.imgur.com/3/gallery/search"
 auth = {"Authorization": "Client-ID 240628d1a11d544"}
 
 
@@ -19,7 +19,7 @@ def imgurProvider(name):
         print("")
         print("calling imgur provider with arg: " + name)
 
-    result = requests.get(imgur_url + name, headers=auth)
+    result = requests.get(f'{imgur_url}?q={name}', headers=auth)
 
     for gallery in result.json()["data"]:
 
@@ -28,7 +28,7 @@ def imgurProvider(name):
         if images is None:
             if log:
                 print("not found images for: " + name)
-                return
+            return
 
         total = len(images)
 

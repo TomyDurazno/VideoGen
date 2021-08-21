@@ -8,6 +8,10 @@ log = Config.LOG
 fullMode = Config.FULLMODE
 uniqueNames = Config.UNIQUE_NAMES
 
+# constants
+project_id = 1
+user_id = 1
+
 
 def buildUrl(args, gen):
 
@@ -21,7 +25,7 @@ def buildUrl(args, gen):
             prefix = "?"
         qs = qs + f'{prefix}{k}={gen[k]}'
 
-    url = f'{args["baseUrl"]}{args["resource"]}{qs}&project_id=1&user_id=1'
+    url = f'{args["baseUrl"]}{args["resource"]}{qs}&project_id={project_id}&user_id={user_id}'
 
     return url
 
