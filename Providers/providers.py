@@ -1,9 +1,9 @@
-from globalSources import Config
+from globalSources import GlobalConfig
 from Providers.imgur import imgurProvider
 from Providers.storyblocks import storyblocksImgProvider, storyblocksMusicProvider, storyblocksVideoProvider
 from Providers.localProvider import localImgProvider, localMusicProvider, localVideoProvider
 
-log = Config.LOG
+log = GlobalConfig.LOG
 
 
 providers = {
@@ -25,6 +25,12 @@ providers = {
 
 def getProviders(key):
     def getImplementation(*args):
+
+        if len(args) <= 1:
+            if log:
+                print("arg not found: source")
+            return
+
         source = args[1]
         provider = providers.get(key).get(source)
 
@@ -33,7 +39,7 @@ def getProviders(key):
             provider(*args[0:nargs])
         else:
             if log:
-                print("not found provider for source: " + source)
+                print(f'provider for source: {source} not found')
         return
 
     return getImplementation

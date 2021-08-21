@@ -1,6 +1,6 @@
-from globalSources import Config
+from globalSources import GlobalConfig
 
-log = Config.LOG
+log = GlobalConfig.LOG
 
 
 def notImplemented(name, provider):

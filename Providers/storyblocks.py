@@ -1,12 +1,12 @@
 import os
 from random import sample
-from globalSources import Config
+from globalSources import GlobalConfig
 from Providers.apikeyHMACgeneration import generate
 import requests
 
-log = Config.LOG
-fullMode = Config.FULLMODE
-uniqueNames = Config.UNIQUE_NAMES
+log = GlobalConfig.LOG
+fullMode = GlobalConfig.FULLMODE
+uniqueNames = GlobalConfig.UNIQUE_NAMES
 
 # constants
 project_id = 1

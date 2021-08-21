@@ -1,9 +1,10 @@
-from globalSources import Config
+import re
+from globalSources import GlobalConfig
 
-log = Config.LOG
+log = GlobalConfig.LOG
 
 
-class Token_Symbol:
+class Token_Symbols:
     Start = "Start"
     SingleTagOpener = "SingleTagOpener"
     TagOpener = "TagOpener"
@@ -16,45 +17,83 @@ class Token_Symbol:
     Word = "Word"
 
 
+class Token_Values:
+    Open = '<'
+    Close = '>'
+    Slash = '/'
+    Quote = '"'
+    Separator = " "
+    Empty = ''
+
+
+class Token_Keys:
+    Sentence = "sentence"
+    Args = "args"
+    Tag = "tag"
+    Type = "type"
+
+
+class Token_Types:
+    Close = "close"
+
+
 def isTagOpener(s):
-    return s[0] == '<'
+    return s[0] == Token_Values.Open
 
 
 def isTagOpenerWithSlash(s):
-    return isTagOpener(s) and s[1] == '/'
+    return isTagOpener(s) and s[1] == Token_Values.Slash
 
 
 def isTagCloser(s):
-    return s[-1] == '>'
+    return s[-1] == Token_Values.Close
 
 
 def isQuoteOpener(s):
-    return s[0] == '"'
+    return s[0] == Token_Values.Quote
 
 
 def isQuoteCloser(s):
-    return s[-1] == '"'
+    return s[-1] == Token_Values.Quote
+
+
+def invalidTagPosition(s):
+    open = [m.start() for m in re.finditer(Token_Values.Open, s)]
+
+    if len(open) > 1 or (len(open) and open[0] != 0):
+        raise ValueError(
+            f'Wrong position: {open[0]} for tag {Token_Values.Open} at: {s}')
+
+    close = [m.start() for m in re.finditer(Token_Values.Close, s)]
+
+    if len(close) > 1 or (len(close) and close[0] != len(s) - 1):
+        raise ValueError(
+            f'Wrong position: {close[0]} for tag {Token_Values.Close} at: {s}')
+
+    return False
 
 
 def GetToken(s):
     if isTagOpenerWithSlash(s):
-        return (Token_Symbol.TagOpenerWithSlash, s[2:-1])
+        return (Token_Symbols.TagOpenerWithSlash, s[2:-1])
     if isTagOpener(s) and isTagCloser(s):
-        return (Token_Symbol.SingleTagOpener, s[1:-1])
+        return (Token_Symbols.SingleTagOpener, s[1:-1])
     if isTagOpener(s):
-        return (Token_Symbol.TagOpener, s[1:])
+        return (Token_Symbols.TagOpener, s[1:])
     if isTagCloser(s):
-        return (Token_Symbol.TagCloser, s[:-1].replace('"', ''))
+        return (Token_Symbols.TagCloser, s[:-1].replace(Token_Values.Quote, Token_Values.Empty))
     if isQuoteOpener(s):
         if isQuoteCloser(s):
-            return (Token_Symbol.SingleStringArg, s.replace('"', ''))
+            return (Token_Symbols.SingleStringArg, s.replace(Token_Values.Quote, Token_Values.Empty))
         else:
             # acumulative case
-            aux = s.replace('"', '').replace('>', '')
-            return (Token_Symbol.StartStringArg, aux)
+            aux = s.replace(Token_Values.Quote, Token_Values.Empty).replace(
+                Token_Values.Close, Token_Values.Empty)
+            return (Token_Symbols.StartStringArg, aux)
     if isQuoteCloser(s):
-        return (Token_Symbol.EndStringArg, s.replace('"', ''))
-    return (Token_Symbol.Word, s.replace('"', ''))
+        return (Token_Symbols.EndStringArg, s.replace(Token_Values.Quote, Token_Values.Empty))
+    if not invalidTagPosition(s):
+        return (Token_Symbols.Word, s.replace(Token_Values.Quote, Token_Values.Empty))
 
 
 def tokenize(lines):
@@ -73,16 +112,16 @@ def tokenize(lines):
     def joinSentence():
         if len(words) > 0:
             wx = {
-                "sentence": " ".join(words)
+                Token_Keys.Sentence: Token_Values.Separator.join(words)
             }
             ret.append(wx)
             words.clear()
 
     # set temp object args
     def setArgs():
-        args = obj.get("args") or []
+        args = obj.get(Token_Keys.Args) or []
         args.append(value)
-        obj["args"] = args
+        obj[Token_Keys.Args] = args
 
     for l in lines:
         for w in l.split():
@@ -91,47 +130,47 @@ def tokenize(lines):
             if log:
                 print((tokenType, value))
 
-            if tokenType == Token_Symbol.SingleTagOpener:
-                obj = {"tag": value}
+            if tokenType == Token_Symbols.SingleTagOpener:
+                obj = {Token_Keys.Tag: value}
                 ret.append(obj)
 
-            if tokenType == Token_Symbol.TagOpener:
+            if tokenType == Token_Symbols.TagOpener:
                 joinSentence()
-                obj = {"tag": value}
+                obj = {Token_Keys.Tag: value}
 
             # Implicit tag building
-            if tokenType == Token_Symbol.SingleStringArg:
+            if tokenType == Token_Symbols.SingleStringArg:
                 setArgs()
 
-            if tokenType == Token_Symbol.TagCloser:
+            if tokenType == Token_Symbols.TagCloser:
                 setArgs()
                 ret.append(obj)
                 obj = {}
                 isTagBuilding = False
 
-            if tokenType == Token_Symbol.Word:
+            if tokenType == Token_Symbols.Word:
                 # Words can appear in sentences or used as tag string literal argument
                 if isTagBuilding:
                     tempargs.append(value)
                 else:
                     words.append(value)
 
-            if tokenType == Token_Symbol.StartStringArg:
+            if tokenType == Token_Symbols.StartStringArg:
                 tempargs.append(value)
                 isTagBuilding = True
 
-            if tokenType == Token_Symbol.EndStringArg:
-                args = obj.get("args") or []
+            if tokenType == Token_Symbols.EndStringArg:
+                args = obj.get(Token_Keys.Args) or []
                 tempargs.append(value)
-                args.append(" ".join(tempargs))
-                obj["args"] = args
+                args.append(Token_Values.Separator.join(tempargs))
+                obj[Token_Keys.Args] = args
                 tempargs = []
 
-            if tokenType == Token_Symbol.TagOpenerWithSlash:
+            if tokenType == Token_Symbols.TagOpenerWithSlash:
                 joinSentence()
                 obj = {
-                    "tag": value,
-                    "type": "close"
+                    Token_Keys.Tag: value,
+                    Token_Keys.Type: Token_Types.Close
                 }
                 ret.append(obj)
 

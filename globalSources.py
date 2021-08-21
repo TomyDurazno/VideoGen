@@ -14,9 +14,11 @@ def singleArg(s):
     return s in sys.argv
 
 
-class Config:
-
-    LOG = singleArg("log") or fromArgs("log") == "verbose"
-    FULLMODE = fromArgs("mode") == "full"
+class GlobalConfig:
+    LOG = singleArg("log".lower())
+    MODE = fromArgs("mode".lower())
+    FULLMODE = MODE == "full".lower()
+    PARSER_ONLY_MODE = MODE == "parser".lower()
+    TOKEN_ONLY_MODE = MODE == "token".lower()
     UNIQUE_NAMES = FULLMODE
-    NAME = fromArgs("file")
+    NAME = fromArgs("file".lower())

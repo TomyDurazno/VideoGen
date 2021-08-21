@@ -1,16 +1,16 @@
 import os
 import requests
 from random import sample
-from globalSources import Config
+from globalSources import GlobalConfig
 
 # Imgur url and auth key
 imgur_url = "https://api.imgur.com/3/gallery/search"
 auth = {"Authorization": "Client-ID 240628d1a11d544"}
 
 
-log = Config.LOG
-fullMode = Config.FULLMODE
-uniqueNames = Config.UNIQUE_NAMES
+log = GlobalConfig.LOG
+fullMode = GlobalConfig.FULLMODE
+uniqueNames = GlobalConfig.UNIQUE_NAMES
 
 
 def imgurProvider(name):
