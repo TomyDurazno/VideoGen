@@ -95,15 +95,13 @@ def storyblocksImgProvider(name):
         isExist = os.path.exists(path)
 
         if not isExist:
-
-            # Create a new directory because it does not exist
             os.makedirs(path)
-            print("The new directory is created!")
+            print("New directory is created")
 
         with open(f'{path}/{uniqueName}.{extension}', "wb") as f:
             # download image to local folder
             f.write(img.content)
-            return
+            return uniqueName
 
     if not fullMode:
         # pop a random rample
@@ -111,7 +109,10 @@ def storyblocksImgProvider(name):
         downloadImg(index)
     else:
         for i in range(total):
-            downloadImg(i)
+            try:
+                uqname = downloadImg(i)
+            except:
+                print("Exception:" + uqname)
 
 
 def storyblocksMusicProvider(name):

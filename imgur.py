@@ -33,6 +33,7 @@ def imgurProvider(name):
         total = len(images)
 
         if(log):
+            print(name)
             print("Images found: " + str(total))
 
         def downloadImg(index):
@@ -70,7 +71,7 @@ def imgurProvider(name):
             with open(f'{path}/{uniqueName}.{extension}', "wb") as f:
                 # download image to local folder
                 f.write(img.content)
-                return
+                return uniqueName
 
         if not fullMode:
             # pop a random rample
@@ -79,4 +80,7 @@ def imgurProvider(name):
             return
         else:
             for i in range(total):
-                downloadImg(i)
+                try:
+                    uqname = downloadImg(i)
+                except:
+                    print("Exception:" + uqname)
