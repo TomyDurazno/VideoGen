@@ -19,7 +19,6 @@ if log:
 
     for token in tokens:
         print(token)
-
     print("")
 
 providers = tag_providers()

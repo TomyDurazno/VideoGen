@@ -53,9 +53,8 @@ def imgurProvider(name):
             uniqueName = link.split(
                 "/").pop().split(".")[0] if uniqueNames else name
 
-            if extension not in ["jpg", "jpeg", "png"]:
-                if log:
-                    print("File found is not an image, downloading it anyways")
+            if extension not in ["jpg", "jpeg", "png"] and log:
+                print("File found is not an image, downloading it anyways")
 
             path = "Images/" + name
 
@@ -65,7 +64,6 @@ def imgurProvider(name):
                     print("New directory was created")
 
             with open(f'{path}/{uniqueName}.{extension}', "wb") as f:
-                # download image to local folder
                 f.write(img.content)
                 return uniqueName
 

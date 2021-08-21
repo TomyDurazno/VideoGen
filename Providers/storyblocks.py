@@ -90,18 +90,17 @@ def storyblocksImgProvider(name):
 
         extension = link.split(".").pop()
 
-        if extension not in ["jpg", "png", "jpeg"]:
+        if extension not in ["jpg", "png", "jpeg"] and log:
             print("File found is not an image, downloading it anyways")
 
         path = "Images/" + name
-        isExist = os.path.exists(path)
 
-        if not isExist:
+        if not os.path.exists(path):
             os.makedirs(path)
-            print("New directory is created")
+            if log:
+                print("New directory is created")
 
         with open(f'{path}/{uniqueName}.{extension}', "wb") as f:
-            # download image to local folder
             f.write(img.content)
             return uniqueName
 
