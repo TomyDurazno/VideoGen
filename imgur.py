@@ -41,7 +41,7 @@ def imgurProvider(name):
 
             link = image["link"]
 
-            if(log):
+            if log:
                 print("attempting download of index: " + str(index))
                 print({'id': image["id"], 'link': link})
 
@@ -52,8 +52,9 @@ def imgurProvider(name):
             uniqueName = link.split(
                 "/").pop().split(".")[0] if uniqueNames else name
 
-            if(extension not in ["jpg", "png", "jpeg"]):
-                print("File found is not an image, downloading it anyways")
+            if extension not in ["jpg", "png", "jpeg"]:
+                if log:
+                    print("File found is not an image, downloading it anyways")
 
             path = "Images/" + name
             isExist = os.path.exists(path)
@@ -62,7 +63,9 @@ def imgurProvider(name):
 
                 # Create a new directory because it does not exist
                 os.makedirs(path)
-                print("The new directory is created!")
+
+                if log:
+                    print("New directory was created")
 
             with open(f'{path}/{uniqueName}.{extension}', "wb") as f:
                 # download image to local folder
@@ -73,6 +76,7 @@ def imgurProvider(name):
             # pop a random rample
             index = sample(range(total), 1).pop()
             downloadImg(index)
+            return
         else:
             for i in range(total):
                 downloadImg(i)
