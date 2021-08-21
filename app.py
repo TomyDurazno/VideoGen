@@ -1,4 +1,4 @@
-from tokenizer import tokenize
+from InputParser.tokenizer import tokenize
 from Providers.providers import tag_providers
 from globalSources import Config
 
