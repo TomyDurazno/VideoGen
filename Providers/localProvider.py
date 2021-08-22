@@ -19,3 +19,13 @@ def localMusicProvider(name, source):
 
 def localVideoProvider(name):
     notImplemented(name, "local video")
+
+
+providerMap = {
+    "source": "local",
+    "tags": {
+        "music": localMusicProvider,
+        "img": localImgProvider,
+        "video": localVideoProvider
+    }
+}

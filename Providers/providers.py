@@ -1,26 +1,15 @@
 from globalSources import GlobalConfig
-from Providers.imgur import imgurProvider
-from Providers.storyblocks import storyblocksImgProvider, storyblocksMusicProvider, storyblocksVideoProvider
-from Providers.localProvider import localImgProvider, localMusicProvider, localVideoProvider
+from Providers.imgur import providerMap as imgurProviderMap
+from Providers.storyblocks import providerMap as storyBlocksProviderMap
+from Providers.localProvider import providerMap as localProviderMap
 
 log = GlobalConfig.LOG
 
-
-providers = {
-    "music": {
-        "storyblocks": storyblocksMusicProvider,
-        "local": localMusicProvider
-    },
-    "img": {
-        "imgur": imgurProvider,
-        "storyblocks": storyblocksImgProvider,
-        "local": localImgProvider
-    },
-    "video": {
-        "storyblocks": storyblocksVideoProvider,
-        "local": localVideoProvider
-    }
-}
+ProvidersMaps = [
+    imgurProviderMap,
+    storyBlocksProviderMap,
+    localProviderMap
+]
 
 
 def getProviders(key):
@@ -32,14 +21,25 @@ def getProviders(key):
             return
 
         source = args[1]
-        provider = providers.get(key).get(source)
+
+        providersForSource = {}
+        for pm in ProvidersMaps:
+            if pm["source"] == source:
+                providersForSource = pm
+
+        if providersForSource is None:
+            if log:
+                print(f'providers for source: {source} not found')
+            return
+
+        provider = providersForSource.get("tags").get(key)
 
         if provider:
             nargs = provider.__code__.co_argcount
             provider(*args[0:nargs])
         else:
             if log:
-                print(f'provider for source: {source} not found')
+                print(f'provider {key} for source: {source} not found')
         return
 
     return getImplementation
@@ -48,7 +48,7 @@ def getProviders(key):
 def tag_providers():
 
     obj = {}
-    for k in providers.keys():
-        obj[k] = getProviders(k)
-
+    for map in ProvidersMaps:
+        for tag, p in map.get("tags").items():
+            obj[tag] = getProviders(tag)
     return obj

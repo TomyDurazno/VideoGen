@@ -13,7 +13,7 @@ fullMode = GlobalConfig.FULLMODE
 uniqueNames = GlobalConfig.UNIQUE_NAMES
 
 
-def imgurProvider(name):
+def imgurImgProvider(name):
 
     if log:
         print("")
@@ -81,3 +81,11 @@ def imgurProvider(name):
         else:
             for i in range(total):
                 call(i)
+
+
+providerMap = {
+    "source": "imgur",
+    "tags": {
+        "img": imgurImgProvider,
+    }
+}

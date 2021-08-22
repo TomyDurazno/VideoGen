@@ -165,3 +165,13 @@ def storyblocksVideoProvider(name):
         print("")
         print("calling storyblocks video provider with arg: " + name)
         print("There is no actual implementation for storyblocks video provider, skipping")
+
+
+providerMap = {
+    "source": "storyblocks",
+    "tags": {
+        "music": storyblocksMusicProvider,
+        "img": storyblocksImgProvider,
+        "video": storyblocksVideoProvider
+    }
+}
