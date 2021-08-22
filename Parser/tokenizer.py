@@ -38,23 +38,23 @@ class Token_Types:
 
 
 def isTagOpener(s):
-    return s[0] == Token_Values.Open
+    return s[0] is Token_Values.Open
 
 
 def isTagOpenerWithSlash(s):
-    return isTagOpener(s) and s[1] == Token_Values.Slash
+    return isTagOpener(s) and s[1] is Token_Values.Slash
 
 
 def isTagCloser(s):
-    return s[-1] == Token_Values.Close
+    return s[-1] is Token_Values.Close
 
 
 def isQuoteOpener(s):
-    return s[0] == Token_Values.Quote
+    return s[0] is Token_Values.Quote
 
 
 def isQuoteCloser(s):
-    return s[-1] == Token_Values.Quote
+    return s[-1] is Token_Values.Quote
 
 
 def invalidTagPosition(s, i):
@@ -116,7 +116,7 @@ def tokenize(lines):
 
     # Join all acumulated words into a sentence
     def joinSentence():
-        if len(words) > 0:
+        if len(words):
             ret.append({
                 Token_Keys.Sentence: Token_Values.Separator.join(words)
             })
@@ -136,11 +136,11 @@ def tokenize(lines):
                 print((tokenType, value))
 
             # <laugh> tag for example
-            if tokenType == Token_Symbols.SingleTagOpenerAndCloser:
+            if tokenType is Token_Symbols.SingleTagOpenerAndCloser:
                 obj = {Token_Keys.Tag: value}
                 ret.append(obj)
 
-            if tokenType == Token_Symbols.TagOpener:
+            if tokenType is Token_Symbols.TagOpener:
                 if isTagBuilding:
                     # Already a tag open
                     raise ValueError(
@@ -150,14 +150,13 @@ def tokenize(lines):
                 isTagBuilding = True
                 obj = {Token_Keys.Tag: value}
 
-            # No Implicit tag building, we can be builduing a string literal
-            if tokenType == Token_Symbols.SingleStringArg:
+            if tokenType is Token_Symbols.SingleStringArg:
                 if isTagBuilding:
                     setArgs()
                 else:
                     words.append(value)
 
-            if tokenType == Token_Symbols.TagCloser:
+            if tokenType is Token_Symbols.TagCloser:
                 if not isTagBuilding:
                     # Already a tag close
                     raise ValueError(
@@ -168,7 +167,7 @@ def tokenize(lines):
                 obj = {}
                 isTagBuilding = False
 
-            if tokenType == Token_Symbols.Word:
+            if tokenType is Token_Symbols.Word:
                 if isTagBuilding:
                     # Words can appear in sentences or used as tag string literal argument
                     tempargs.append(value)
@@ -179,14 +178,14 @@ def tokenize(lines):
                     else:
                         words.append(value)
 
-            if tokenType == Token_Symbols.StartStringArg:
+            if tokenType is Token_Symbols.StartStringArg:
                 if isTagBuilding:
                     tempargs.append(value)
                 else:
                     isStringLiteralBuilding = True
                     stringLiteralAcum.append(value)
 
-            if tokenType == Token_Symbols.EndStringArg:
+            if tokenType is Token_Symbols.EndStringArg:
                 if isTagBuilding:
                     args = obj.get(Token_Keys.Args) or []
                     tempargs.append(value)
@@ -200,7 +199,7 @@ def tokenize(lines):
                     stringLiteralAcum = []
                     isStringLiteralBuilding = False
 
-            if tokenType == Token_Symbols.TagOpenerWithSlash:
+            if tokenType is Token_Symbols.TagOpenerWithSlash:
                 joinSentence()
                 ret.append({
                     Token_Keys.Tag: value,

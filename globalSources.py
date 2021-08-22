@@ -17,8 +17,8 @@ def singleArg(s):
 class GlobalConfig:
     LOG = singleArg("log".lower())
     MODE = fromArgs("mode".lower())
-    FULLMODE = MODE == "full".lower()
-    PARSER_ONLY_MODE = MODE == "parser".lower()
-    TOKEN_ONLY_MODE = MODE == "token".lower()
+    FULLMODE = MODE is "full".lower()
+    PARSER_ONLY_MODE = MODE is "parser".lower()
+    TOKEN_ONLY_MODE = MODE is "token".lower()
     UNIQUE_NAMES = FULLMODE
     NAME = fromArgs("file".lower())
