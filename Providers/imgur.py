@@ -67,7 +67,6 @@ def imgurProvider(name):
                 f.write(img.content)
                 return uniqueName
 
-        # try/except
         def call(index):
             uqname = "NN"
             try:
