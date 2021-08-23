@@ -1,7 +1,9 @@
 import re
+from functools import reduce
 from globalSources import GlobalConfig
 
 log = GlobalConfig.LOG
+splitword_on = GlobalConfig.SPLIT_WORD_FEATURE
 
 
 class Token_Symbols:
@@ -99,6 +101,56 @@ def GetToken(s, i):
     return (Token_Symbols.Word, s.replace(Token_Values.Quote, Token_Values.Empty))
 
 
+def splitWordWithTag(s):
+
+    if not splitword_on:
+        return [s]
+
+    openAndCloseTags = [
+        [(m.start(), "open") for m in re.finditer(
+            Token_Values.Open, s) if m.start() != 0],
+        [(m.start(), "close") for m in re.finditer(
+            Token_Values.Close, s) if m.start() != len(s) - 1]
+    ]
+
+    def flatMap(f, xs):
+        return reduce(lambda a, b: a + b, map(f, xs))
+
+    def get(tuple):
+        return tuple[0]
+
+    tags = sorted(flatMap(lambda x: x, openAndCloseTags), key=get)
+
+    acum = []
+    leftover = s
+
+    cont = 0
+
+    def splitByIndex(ss, i, tagType):
+        nonlocal cont
+
+        delta = 0
+        if tagType == "open":
+            delta = -1
+        else:
+            delta = 1
+
+        i = i - (cont)
+        start = ss[:(i + delta)]
+        end = ss[(i + delta):]
+        cont = cont + i
+        print(cont)
+        return (start, end)
+
+    for index, tagType in tags:
+        (start, leftover) = splitByIndex(leftover, index, tagType)
+        acum.append(start)
+
+    acum.append(leftover)
+
+    return acum
+
+
 def tokenize(lines):
 
     # Words acumulator
@@ -128,8 +180,18 @@ def tokenize(lines):
         args.append(value)
         obj[Token_Keys.Args] = args
 
+    linesWithWords = []
     for i, l in enumerate(lines):
+        lineAcum = []
         for w in l.split():
+            for auxw in splitWordWithTag(w):
+                if len(auxw):
+                    lineAcum.append(auxw)
+
+        linesWithWords.append((i, lineAcum))
+
+    for i, lines in linesWithWords:
+        for w in lines:
             (tokenType, value) = GetToken(w, i + 1)  # pass the text line
 
             if log:
