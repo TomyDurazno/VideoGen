@@ -17,24 +17,26 @@ def imgurImgProvider(name):
 
     if log:
         print("")
-        print("calling imgur provider with arg: " + name)
+        print(f'calling imgur provider with arg: {name}')
 
     result = requests.get(f'{imgur_url}?q={name}', headers=auth)
 
-    for gallery in result.json()["data"]:
+    data = result.json()["data"]
+
+    for gallery in data:
 
         images = gallery.get("images")
 
         if images is None:
             if log:
-                print("not found images for: " + name)
+                print(f'not found images for: {name}')
             return
 
         total = len(images)
 
         if log:
             print(name)
-            print("Images found: " + str(total))
+            print(f'Images found: {str(total)}')
 
         def downloadImg(index):
 
@@ -43,7 +45,7 @@ def imgurImgProvider(name):
             link = image["link"]
 
             if log:
-                print("attempting download of index: " + str(index))
+                print(f'attempting download of index: {str(index)}')
                 print({'id': image["id"], 'link': link})
 
             extension = link.split(".").pop()
