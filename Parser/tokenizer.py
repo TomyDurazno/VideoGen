@@ -92,13 +92,15 @@ def GetToken(s, i):
             return (Token_Symbols.SingleStringArg, s.replace(Token_Values.Quote, Token_Values.Empty))
         else:
             # acumulative case
-            return (Token_Symbols.StartStringArg, s.replace(Token_Values.Quote, Token_Values.Empty).replace(Token_Values.Close, Token_Values.Empty))
+            aux = s.replace(Token_Values.Quote, Token_Values.Empty).replace(
+                Token_Values.Close, Token_Values.Empty)
+            return (Token_Symbols.StartStringArg, aux)
     if isQuoteCloser(s):
         return (Token_Symbols.EndStringArg, s.replace(Token_Values.Quote, Token_Values.Empty))
     return (Token_Symbols.Word, s.replace(Token_Values.Quote, Token_Values.Empty))
 
 
-def splitByTags(s):
+def splitWordWithTag(s):
 
     openTags = [m.start() for m in re.finditer(
         Token_Values.Open, s) if m.start() != 0]
@@ -106,51 +108,40 @@ def splitByTags(s):
     closeTags = [m.start()for m in re.finditer(
         Token_Values.Close, s) if m.start() != len(s) - 1]
 
-    tags = len(openTags) or len(closeTags)
-
-    if not tags:
-        yield s
-    else:
+    if len(openTags) or len(closeTags):
         chars = []
+        words = []
         for i, c in enumerate([c for c in s]):
 
             if i in openTags:
                 if len(chars):
-                    yield Token_Values.Empty.join(chars)
+                    words.append(Token_Values.Empty.join(chars))
                 chars = []
 
             if i in closeTags:
-                yield Token_Values.Empty.join([*chars, c])
+                chars.append(c)
+                words.append(Token_Values.Empty.join(chars))
                 chars = []
                 continue
 
             chars.append(c)
 
         if len(chars):
-            yield Token_Values.Empty.join(chars)
+            words.append(Token_Values.Empty.join(chars))
 
-
-def splitLine(l):
-    for w in l.split():
-        for auxw in splitByTags(w):
-            yield auxw
-
-
-def yieldWords(lines):
-    for i, l in enumerate(lines):
-        yield (i, list(splitLine(l)))
+        return words
+    else:
+        return [s]
 
 
 def tokenize(lines):
 
     # Words acumulator
     words = []
-
     # Temp object used to build tags
     obj = {}
     tempargs = []
     stringLiteralAcum = []
-
     # Flags
     isTagBuilding = False
     isStringLiteralBuilding = False
@@ -158,15 +149,33 @@ def tokenize(lines):
     # The return type is an array with all the symbols
     ret = []
 
+    # Join all acumulated words into a sentence
+    def joinSentence():
+        if len(words):
+            ret.append({
+                Token_Keys.Sentence: Token_Values.Separator.join(words)
+            })
+            words.clear()
+
     # set temp object args
     def setArgs():
         args = obj.get(Token_Keys.Args) or []
         args.append(value)
         obj[Token_Keys.Args] = args
 
-    for i, line in yieldWords(lines):  # linesWithWords:
-        for word in line:
-            (tokenType, value) = GetToken(word, i + 1)  # pass the text line
+    linesWithWords = []
+
+    for i, l in enumerate(lines):
+        lineAcum = []
+        for w in l.split():
+            for auxw in splitWordWithTag(w):
+                lineAcum.append(auxw)
+
+        linesWithWords.append((i, lineAcum))
+
+    for i, lines in linesWithWords:
+        for w in lines:
+            (tokenType, value) = GetToken(w, i + 1)  # pass the text line
 
             if log:
                 print((tokenType, value))
@@ -182,13 +191,7 @@ def tokenize(lines):
                     raise ValueError(
                         f'Non closing tag {Token_Values.Open} at line {i}: {Token_Values.Open}{value}')
 
-                # Join all acumulated words into a sentence
-                if len(words):
-                    ret.append({
-                        Token_Keys.Sentence: Token_Values.Separator.join(words)
-                    })
-                    words.clear()
-
+                joinSentence()
                 isTagBuilding = True
                 obj = {Token_Keys.Tag: value}
 
@@ -229,23 +232,20 @@ def tokenize(lines):
 
             if tokenType is Token_Symbols.EndStringArg:
                 if isTagBuilding:
-                    obj[Token_Keys.Args] = [*(obj.get(Token_Keys.Args) or []), Token_Values.Separator.join(
-                        [*tempargs, value])]
+                    args = obj.get(Token_Keys.Args) or []
+                    tempargs.append(value)
+                    args.append(Token_Values.Separator.join(tempargs))
+                    obj[Token_Keys.Args] = args
                     tempargs = []
                 else:
-                    words.append(
-                        f'{Token_Values.Quote}{Token_Values.Separator.join([*stringLiteralAcum, value])}{Token_Values.Quote}')
+                    stringLiteralAcum.append(value)
+                    literal = f'{Token_Values.Quote}{Token_Values.Separator.join(stringLiteralAcum)}{Token_Values.Quote}'
+                    words.append(literal)
                     stringLiteralAcum = []
                     isStringLiteralBuilding = False
 
             if tokenType is Token_Symbols.TagOpenerWithSlash:
-
-                # Join all acumulated words into a sentence
-                if len(words):
-                    ret.append(
-                        {Token_Keys.Sentence: Token_Values.Separator.join(words)})
-                    words.clear()
-
+                joinSentence()
                 ret.append({
                     Token_Keys.Tag: value,
                     Token_Keys.Type: Token_Types.Close
