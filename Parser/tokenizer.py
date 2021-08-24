@@ -1,9 +1,7 @@
 import re
-from functools import reduce
 from globalSources import GlobalConfig
 
 log = GlobalConfig.LOG
-splitword_on = GlobalConfig.SPLIT_WORD_FEATURE
 
 
 class Token_Symbols:
@@ -24,7 +22,7 @@ class Token_Values:
     Close = '>'
     Slash = '/'
     Quote = '"'
-    Separator = " "
+    Separator = ' '
     Empty = ''
 
 
@@ -36,6 +34,7 @@ class Token_Keys:
 
 
 class Token_Types:
+    Open = "open"
     Close = "close"
 
 
@@ -103,52 +102,36 @@ def GetToken(s, i):
 
 def splitWordWithTag(s):
 
-    if not splitword_on:
+    openTags = [m.start() for m in re.finditer(
+        Token_Values.Open, s) if m.start() != 0]
+
+    closeTags = [m.start()for m in re.finditer(
+        Token_Values.Close, s) if m.start() != len(s) - 1]
+
+    if len(openTags) or len(closeTags):
+        chars = []
+        words = []
+        for i, c in enumerate([c for c in s]):
+
+            if i in openTags:
+                if len(chars):
+                    words.append(Token_Values.Empty.join(chars))
+                chars = []
+
+            if i in closeTags:
+                chars.append(c)
+                words.append(Token_Values.Empty.join(chars))
+                chars = []
+                continue
+
+            chars.append(c)
+
+        if len(chars):
+            words.append(Token_Values.Empty.join(chars))
+
+        return words
+    else:
         return [s]
-
-    openAndCloseTags = [
-        [(m.start(), "open") for m in re.finditer(
-            Token_Values.Open, s) if m.start() != 0],
-        [(m.start(), "close") for m in re.finditer(
-            Token_Values.Close, s) if m.start() != len(s) - 1]
-    ]
-
-    def flatMap(f, xs):
-        return reduce(lambda a, b: a + b, map(f, xs))
-
-    def get(tuple):
-        return tuple[0]
-
-    tags = sorted(flatMap(lambda x: x, openAndCloseTags), key=get)
-
-    acum = []
-    leftover = s
-
-    cont = 0
-
-    def splitByIndex(ss, i, tagType):
-        nonlocal cont
-
-        delta = 0
-        if tagType == "open":
-            delta = -1
-        else:
-            delta = 1
-
-        i = i - (cont)
-        start = ss[:(i + delta)]
-        end = ss[(i + delta):]
-        cont = cont + i
-        print(cont)
-        return (start, end)
-
-    for index, tagType in tags:
-        (start, leftover) = splitByIndex(leftover, index, tagType)
-        acum.append(start)
-
-    acum.append(leftover)
-
-    return acum
 
 
 def tokenize(lines):
@@ -181,12 +164,12 @@ def tokenize(lines):
         obj[Token_Keys.Args] = args
 
     linesWithWords = []
+
     for i, l in enumerate(lines):
         lineAcum = []
         for w in l.split():
             for auxw in splitWordWithTag(w):
-                if len(auxw):
-                    lineAcum.append(auxw)
+                lineAcum.append(auxw)
 
         linesWithWords.append((i, lineAcum))
 
