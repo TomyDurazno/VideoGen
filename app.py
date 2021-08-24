@@ -49,3 +49,5 @@ for token in tokens:
             provider(*token.get(Token_Keys.Args) or [])
         else:
             print("Non matching provider found: " + tag)
+
+print("Script ended with success!")
