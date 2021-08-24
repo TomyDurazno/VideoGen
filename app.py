@@ -19,12 +19,12 @@ if parserOnly:
     exit()
 
 if log:
-    print("")
+    print('')
 
     for token in tokens:
         print(token)
 
-    print("")
+    print('')
 
     print(f'name: {name}')
     print(f'log: {log}')

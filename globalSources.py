@@ -22,4 +22,3 @@ class GlobalConfig:
     TOKEN_ONLY_MODE = MODE == "token".lower()
     UNIQUE_NAMES = FULLMODE
     NAME = fromArgs("file".lower())
-    SPLIT_WORD_FEATURE = fromArgs("feature".lower()) == "split-word"
