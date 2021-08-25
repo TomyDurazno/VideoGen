@@ -15,10 +15,11 @@ def singleArg(s):
 
 
 class GlobalConfig:
-    LOG = singleArg("log".lower())
-    MODE = fromArgs("mode".lower())
-    FULLMODE = MODE == "full".lower()
-    PARSER_ONLY_MODE = MODE == "parser".lower()
-    TOKEN_ONLY_MODE = MODE == "token".lower()
+    LOG = singleArg("log") or fromArgs("log")
+    SENTENCE = fromArgs("log") == "sentence"
+    MODE = fromArgs("mode")
+    FULLMODE = MODE == "full"
+    PARSER_ONLY_MODE = MODE == "parser"
+    TOKEN_ONLY_MODE = MODE == "token"
     UNIQUE_NAMES = FULLMODE
-    NAME = fromArgs("file".lower())
+    NAME = fromArgs("file")
