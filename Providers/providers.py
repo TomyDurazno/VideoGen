@@ -24,7 +24,9 @@ def getProviders(key):
                 print(f'providers for source: {source} not found')
             return
 
-        provider = providersForSource.get("tags").get(key)
+        provider = None
+        if len(providersForSource):
+            provider = providersForSource.get("tags").get(key)
 
         if provider:
             nargs = provider.__code__.co_argcount
