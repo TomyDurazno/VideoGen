@@ -130,15 +130,15 @@ def splitByTags(s):
             yield Token_Values.Empty.join(chars)
 
 
-def splitLine(l):
+def splitLineIntoWords(l):
     for w in l.split():
         for auxw in splitByTags(w):
             yield auxw
 
 
-def yieldWords(lines):
+def wordsByLines(lines):
     for i, l in enumerate(lines):
-        yield (i, list(splitLine(l)))
+        yield (i, list(splitLineIntoWords(l)))
 
 
 def tokenize(lines):
@@ -158,13 +158,7 @@ def tokenize(lines):
     # The return type is an array with all the symbols
     ret = []
 
-    # set temp object args
-    def setArgs():
-        args = obj.get(Token_Keys.Args) or []
-        args.append(value)
-        obj[Token_Keys.Args] = args
-
-    for i, line in yieldWords(lines):  # linesWithWords:
+    for i, line in wordsByLines(lines):
         for word in line:
             (tokenType, value) = GetToken(word, i + 1)  # pass the text line
 
@@ -194,7 +188,8 @@ def tokenize(lines):
 
             if tokenType is Token_Symbols.SingleStringArg:
                 if isTagBuilding:
-                    setArgs()
+                    obj[Token_Keys.Args] = [
+                        *(obj.get(Token_Keys.Args) or []), value]
                 else:
                     words.append(value)
 
@@ -204,7 +199,8 @@ def tokenize(lines):
                     raise ValueError(
                         f'Non closing tag {Token_Values.Close} at line {i}: {Token_Values.Close}{value}')
 
-                setArgs()
+                obj[Token_Keys.Args] = [
+                    *(obj.get(Token_Keys.Args) or []), value]
                 ret.append(obj)
                 obj = {}
                 isTagBuilding = False
