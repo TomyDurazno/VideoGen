@@ -23,3 +23,4 @@ class GlobalConfig:
     TOKEN_ONLY_MODE = MODE == "token"
     UNIQUE_NAMES = FULLMODE
     NAME = fromArgs("file")
+    SPLIT_BY_DOUBLELINE = fromArgs("split") == "doubleline"

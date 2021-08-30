@@ -2,6 +2,7 @@ import re
 from globalSources import GlobalConfig
 
 log = GlobalConfig.LOG
+splitByDoubleLine = GlobalConfig.SPLIT_BY_DOUBLELINE
 
 
 class Token_Symbols:
@@ -24,6 +25,7 @@ class Token_Values:
     Quote = '"'
     Separator = ' '
     Empty = ''
+    LineBreak = '/n'
 
 
 class Token_Keys:
@@ -31,6 +33,7 @@ class Token_Keys:
     Args = "args"
     Tag = "tag"
     Type = "type"
+    NewLine = "newline"
 
 
 class Token_Types:
@@ -141,7 +144,7 @@ def wordsByLines(lines):
         yield (i, list(splitLineIntoWords(l)))
 
 
-def tokenize(lines):
+def tokenizeLines(lines):
 
     # Words acumulator
     words = []
@@ -247,4 +250,12 @@ def tokenize(lines):
                     Token_Keys.Type: Token_Types.Close
                 })
 
+        ret.append({Token_Keys.NewLine: Token_Values.LineBreak})
+    # pop last added newline
+    ret.pop()
+
     return ret
+
+
+def tokenize(s):
+    return tokenizeLines(re.split('\n|//', s) if splitByDoubleLine else s.split('\n'))

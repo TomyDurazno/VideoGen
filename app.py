@@ -11,10 +11,9 @@ logSentence = GlobalConfig.SENTENCE
 
 name = "guion.txt" if name is None else name
 
-f = open("Guiones/" + name, "r", encoding="utf-8")
-
-# Transform the input text to a series of tokens
-tokens = tokenize(f.readlines())
+with open("Guiones/" + name, "r", encoding="utf-8") as f:
+    # Transform the input text to a series of tokens
+    tokens = tokenize(f.read())
 
 if parserOnly:
     exit()
@@ -37,11 +36,16 @@ f = open(f"Guiones/{name.split('.')[0]}_clean.txt", "w")
 
 for token in tokens:
     sentence = token.get(Token_Keys.Sentence)
+    newline = token.get(Token_Keys.NewLine)
+
     if sentence:
         f.write(sentence)
+
+        # if logSentence:
+        # print(sentence)
+
+    if newline:
         f.write("\n")
-        if logSentence:
-            print(sentence)
 
 f.close()
 

@@ -1,4 +1,1 @@
-<music "sad.mp3" "local">En los 90s aparecieron juegos icónicos como el Unreal Tournament<img "Unreal Tournament" "imgur"> 
-Age of Empires 2<img "Age of Empires 2" "imgur"><gif "Pokemon" "giphy">
-Y el Pokemon para Gameboy <img "Charizard" "imgur">Hasta La vista!<img "Bye Bye" "imgur"><music "laser" "storyblocks">
-</music>
+<music "sad.mp3" "local">En los 90s aparecieron juegos icónicos como el Unreal Tournament<img "Unreal Tournament" "imgur">//Age of Empires 2<img "Age of Empires 2" "imgur"><gif "Pokemon" "giphy">//Y el Pokemon para Gameboy <img "Charizard" "imgur">Hasta La vista!<img "Bye Bye" "imgur"><music "laser" "storyblocks"></music>
