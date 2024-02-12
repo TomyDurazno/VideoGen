@@ -1,0 +1,4 @@
+Este es un guion de ejemplo. Contiene varias oraciones separadas por puntos.
+Cada oracion representa una linea de dialogo en el guion.
+Puedes usar este guion para probar la funcion que leiste.
+Recuerda guardarlo en un archivo de texto llamado 'guion.txt'.
